@@ -1,0 +1,42 @@
+<?php
+
+
+    function generateElements():array
+    {
+        return [
+            'clientref' => '2ssssssssr',
+            'name' => 'testoss', // if you change name of customer serial will change
+            'area' => 'محمد نجيب',
+            'address' => 'test address',
+            'tel' => '01118613231',
+            'amount' => '60',
+            'remarks' => 'this is note about shipment',
+            'pieces' => '1',
+            'uname' => 'deluce',
+            'upass' => '@As201301067808'
+        ];
+    }
+
+    function callServiceSimpleSoap()
+    {
+        $url = 'http://egexpresstrack.com/webservice/shipments.asmx/SendShipment';
+
+        try {
+
+            $newConnect = new \GuzzleHttp\Client(['headers' => ['Content-Type' => 'application/json']]);
+            $response = $newConnect->post($url,["json" => generateElements()]);
+            $data = simplexml_load_string(json_decode($response->getBody(),true)['d'],
+                'SimpleXMLElement',LIBXML_NOCDATA)->ShipmentDetail;
+            dd((array) $data);
+
+        }catch (\Exception $exception){
+
+            return response()->json(['error'=> $exception->getMessage()],200);
+        }
+    }
+    
+    
+    
+    echo "<pre>";
+    print_r(callServiceSimpleSoap());
+    echo "</pre>";
